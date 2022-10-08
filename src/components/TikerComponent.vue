@@ -1,0 +1,43 @@
+<template>
+  <section
+    class="min-w-full border-solid bg-white rounded-lg flex flex-col p-4"
+  >
+    <div class="flex">
+      <div class="border-2 border-gray-300 rounded-lg px-3 py-2 max-w-md w-1/3">
+        <label for="wallet" class="block text-sm font-medium text-gray-700"
+          >Тикер</label
+        >
+        <div class="mt-1 relative rounded-md">
+          <input
+            v-model="ticker"
+            @keydown.enter="add"
+            type="text"
+            name="wallet"
+            id="wallet"
+            class="block w-full pr-10 text-gray-500 focus:outline-none"
+            placeholder="Например DOGE"
+          />
+        </div>
+      </div>
+    </div>
+    <button
+      @click="add"
+      type="button"
+      class="px-6 py-3 rounded-md text-white bg-purple-800 font-medium w-32 mt-3"
+    >
+      Добавить
+    </button>
+  </section>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      ticker: "",
+    };
+  },
+};
+</script>
+
+<style lang="scss" scoped></style>
