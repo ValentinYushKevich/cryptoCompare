@@ -3,6 +3,7 @@
     <TikerComponent />
     <SearchInput />
     <CoinsList />
+    <GrafComponent />
     <hr class="w-full border-t border-gray-200 mt-4 mb-3" />
 
     <div class="flex justify-between">
@@ -32,8 +33,9 @@
 import TikerComponent from "./TikerComponent.vue";
 import SearchInput from "./SearchInput.vue";
 import CoinsList from "./CoinsList.vue";
+import GrafComponent from "./GrafComponent.vue";
 export default {
-  components: { TikerComponent, SearchInput, CoinsList },
+  components: { TikerComponent, SearchInput, CoinsList, GrafComponent },
   methods: {
     painationChange(value) {
       console.log(value);
