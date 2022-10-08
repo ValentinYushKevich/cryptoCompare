@@ -23,7 +23,7 @@
     <button
       @click="add"
       type="button"
-      class="px-6 py-3 rounded-md text-white bg-purple-800 font-medium w-32 mt-3"
+      class="px-6 py-3 rounded-md text-white bg-purple-900 font-medium w-32 mt-3"
     >
       Добавить
     </button>

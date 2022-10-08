@@ -1,33 +1,33 @@
 <template>
-  <div
-    class="border-2 border-gray-300 rounded-lg px-3 py-2 max-w-md w-1/3 mt-4 bg-white"
-  >
-    <div class="relative rounded-md">
-      <input
-        v-model="search"
-        @keydown.enter="add"
-        type="text"
-        name="wallet"
-        id="wallet"
-        class="flex w-full pl-10 text-gray-500 focus:outline-none"
-        placeholder="Найти тикер"
-      />
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        class="absolute top-0 left-0"
-      >
-        <path
-          d="M17.5 17.5L12.5 12.5M14.1667 8.33333C14.1667 11.555 11.555 14.1667 8.33333 14.1667C5.11167 14.1667 2.5 11.555 2.5 8.33333C2.5 5.11167 5.11167 2.5 8.33333 2.5C11.555 2.5 14.1667 5.11167 14.1667 8.33333Z"
-          stroke="#9CA3AF"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+  <div class="mt-4 mb-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div class="border-2 border-gray-300 rounded-lg px-3 py-2 bg-white">
+      <div class="relative rounded-md">
+        <input
+          v-model="search"
+          @keydown.enter="add"
+          type="text"
+          name="wallet"
+          id="wallet"
+          class="flex w-full pl-10 text-gray-500 focus:outline-none"
+          placeholder="Найти тикер"
         />
-      </svg>
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          class="absolute top-0 left-0"
+        >
+          <path
+            d="M17.5 17.5L12.5 12.5M14.1667 8.33333C14.1667 11.555 11.555 14.1667 8.33333 14.1667C5.11167 14.1667 2.5 11.555 2.5 8.33333C2.5 5.11167 5.11167 2.5 8.33333 2.5C11.555 2.5 14.1667 5.11167 14.1667 8.33333Z"
+            stroke="#9CA3AF"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
     </div>
   </div>
 </template>
