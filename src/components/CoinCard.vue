@@ -2,8 +2,10 @@
   <div
     class="bg-white rounded-lg border-2 border-solid cursor-pointer py-4 px-5 text-gray-900 relative"
   >
-    <div class="text-black text-sm font-normal">ETH</div>
-    <div class="text-black text-4xl font-medium">1095.45$</div>
+    <div class="text-black text-sm font-normal">{{ coin.name }}</div>
+    <div class="text-black text-4xl font-medium">
+      {{ formatPrice(coin.price) }}$
+    </div>
 
     <button class="absolute top-0 right-0 p-4">
       <svg
@@ -27,7 +29,18 @@
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    coin: {
+      type: Object,
+      required: true,
+    },
+  },
+  methods: {
+    formatPrice(price) {
+      if (price === "-") return price;
+      return price > 1 ? price.toFixed(2) : price.toPrecision(2);
+    },
+  },
+};
 </script>
-
-<style lang="scss" scoped></style>

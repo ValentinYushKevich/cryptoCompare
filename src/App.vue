@@ -2,7 +2,7 @@
   <div class="container mx-auto flex flex-col bg-gray-100 p-6 h-screen">
     <TikerComponent @addTiker="addTiker" />
     <SearchInput @searchCoin="searchCoin" />
-    <CoinsList />
+    <CoinsList :allCurrencies="filteredCurrencies" />
     <GrafComponent />
     <hr class="w-full border-t border-gray-200 mt-4 mb-3" />
 
@@ -34,30 +34,49 @@ import TikerComponent from "@/components/TikerComponent.vue";
 import SearchInput from "@/components/SearchInput.vue";
 import CoinsList from "@/components/CoinsList.vue";
 import GrafComponent from "@/components/GrafComponent.vue";
-import { sendOnSocket } from "@/utils/wsConnect";
+import { subscribeToCurrency } from "@/utils/wsConnect";
 
 export default {
   name: "App",
   components: { TikerComponent, SearchInput, CoinsList, GrafComponent },
-  mounted() {
-    setTimeout(() => {
-      sendOnSocket({
-        action: "SubAdd",
-        subs: [`5~CCCAGG~DOGE~USD`],
-      });
-    }, 5000);
+  data() {
+    return {
+      allCurrencies: [],
+      search: "",
+    };
+  },
+  mounted() {},
+  computed: {
+    filteredCurrencies() {
+      return this.allCurrencies.filter(
+        (currency) =>
+          currency.name.includes(this.search) && currency.price !== "-"
+      );
+    },
   },
   methods: {
+    updatePrice(name, price) {
+      console.log("PRICE", price);
+      this.allCurrencies
+        .filter((c) => c.name === name)
+        .forEach((c) => {
+          c.price = price;
+        });
+    },
     paginationChange(value) {
       console.log(value);
     },
     searchCoin(value) {
       console.log(value);
     },
-    addTiker() {
-      sendOnSocket({
-        action: "SubAdd",
-        subs: [`5~CCCAGG~DOGE~USD`],
+    addTiker(currency) {
+      const newCoin = {
+        name: currency,
+        price: "-",
+      };
+      this.allCurrencies.push(newCoin);
+      subscribeToCurrency(currency, (newPrice) => {
+        return this.updatePrice(currency, newPrice);
       });
     },
   },
