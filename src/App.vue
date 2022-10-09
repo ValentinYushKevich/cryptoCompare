@@ -2,7 +2,16 @@
   <div class="container mx-auto flex flex-col bg-gray-100 p-6 h-screen">
     <TikerComponent @addTiker="addTiker" />
     <SearchInput @searchCoin="searchCoin" />
-    <CoinsList :allCurrencies="filteredCurrencies" />
+    <div class="mt-5 mb-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <CoinCard
+        v-for="coin of filteredCurrencies"
+        :key="coin.name"
+        :coin="coin"
+        :isActive="selectedCurrency === coin.name"
+        @select="selectCurrency(coin.name)"
+        @remove="deleteTiker(coin.name)"
+      />
+    </div>
     <GrafComponent />
     <hr class="w-full border-t border-gray-200 mt-4 mb-3" />
 
@@ -32,17 +41,19 @@
 <script>
 import TikerComponent from "@/components/TikerComponent.vue";
 import SearchInput from "@/components/SearchInput.vue";
-import CoinsList from "@/components/CoinsList.vue";
 import GrafComponent from "@/components/GrafComponent.vue";
-import { subscribeToCurrency } from "@/utils/wsConnect";
+import CoinCard from "@/components/CoinCard.vue";
+// eslint-disable-next-line prettier/prettier
+import { subscribeToCurrency, unsubscribeFromCurrency } from "@/utils/wsConnect";
 
 export default {
   name: "App",
-  components: { TikerComponent, SearchInput, CoinsList, GrafComponent },
+  components: { TikerComponent, SearchInput, GrafComponent, CoinCard },
   data() {
     return {
       allCurrencies: [],
       search: "",
+      selectedCurrency: null,
     };
   },
   mounted() {},
@@ -78,6 +89,23 @@ export default {
       subscribeToCurrency(currency, (newPrice) => {
         return this.updatePrice(currency, newPrice);
       });
+    },
+    selectCurrency(coin) {
+      if (this.selectedCurrency == coin) {
+        this.selectedCurrency = null;
+        return;
+      }
+
+      this.selectedCurrency = coin.name;
+    },
+    deleteTiker(currency) {
+      this.allCurrencies = this.allCurrencies.filter(
+        (c) => c.name !== currency
+      );
+
+      if (this.selectedCurrency === currency) this.selectedCurrency = null;
+
+      unsubscribeFromCurrency(currency);
     },
   },
 };

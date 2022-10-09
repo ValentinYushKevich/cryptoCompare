@@ -1,13 +1,15 @@
 <template>
   <div
+    :class="{ 'border-gray-900': isActive }"
     class="bg-white rounded-lg border-2 border-solid cursor-pointer py-4 px-5 text-gray-900 relative"
+    @click="$emit('select')"
   >
     <div class="text-black text-sm font-normal">{{ coin.name }}</div>
     <div class="text-black text-4xl font-medium">
       {{ formatPrice(coin.price) }}$
     </div>
 
-    <button class="absolute top-0 right-0 p-4">
+    <button @click.stop="$emit('remove')" class="absolute top-0 right-0 p-4">
       <svg
         width="20"
         height="20"
@@ -34,6 +36,10 @@ export default {
     coin: {
       type: Object,
       required: true,
+    },
+    isActive: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
