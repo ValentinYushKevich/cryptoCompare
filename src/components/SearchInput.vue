@@ -39,6 +39,11 @@ export default {
       search: "",
     };
   },
+  searchCoin() {
+    this.$emit("searchCoin", this.search);
+
+    this.search = "";
+  },
 };
 </script>
 
