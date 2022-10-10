@@ -56,7 +56,23 @@ export default {
       selectedCurrency: null,
     };
   },
+  created() {
+    const coinsData = localStorage.getItem("coins-list");
+    if (coinsData) {
+      this.allCurrencies = JSON.parse(coinsData);
+      this.allCurrencies.forEach((currency) => {
+        subscribeToCurrency(currency.name, (newPrice) => {
+          return this.updatePrice(currency.name, newPrice);
+        });
+      });
+    }
+  },
   mounted() {},
+  watch: {
+    allCurrencies() {
+      localStorage.setItem("coins-list", JSON.stringify(this.allCurrencies));
+    },
+  },
   computed: {
     filteredCurrencies() {
       return this.allCurrencies.filter(
@@ -67,6 +83,7 @@ export default {
   },
   methods: {
     updatePrice(name, price) {
+      console.log("name, price", name, price);
       this.allCurrencies
         .filter((c) => c.name === name)
         .forEach((c) => {
