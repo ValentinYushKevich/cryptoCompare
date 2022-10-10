@@ -2,8 +2,10 @@
   <section
     class="min-w-full border-solid bg-white rounded-lg flex flex-col p-4"
   >
-    <div class="flex">
-      <div class="border-2 border-gray-300 rounded-lg px-3 py-2 max-w-md w-1/3">
+    <div
+      class="grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 relative"
+    >
+      <div class="border-2 border-gray-300 rounded-lg px-3 py-2">
         <label for="wallet" class="block text-sm font-medium text-gray-700"
           >Тикер</label
         >

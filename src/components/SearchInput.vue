@@ -1,5 +1,7 @@
 <template>
-  <div class="mt-4 mb-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
+  <div
+    class="mt-4 mb-2 grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1"
+  >
     <div class="border-2 border-gray-300 rounded-lg px-3 py-2 bg-white">
       <div class="relative rounded-md">
         <input

@@ -1,8 +1,10 @@
 <template>
-  <div class="container mx-auto flex flex-col bg-gray-100 p-6 h-screen">
+  <div class="container mx-auto flex flex-col bg-gray-100 p-6">
     <TikerComponent @addTiker="addTiker" />
     <SearchInput v-model="search" />
-    <div class="mt-5 mb-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div
+      class="mt-5 mb-2 grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1"
+    >
       <CoinCard
         v-for="coin of paginatedCurrencies"
         :key="coin.name"
@@ -18,15 +20,18 @@
       :graph="priceGraph"
       class="mt-4"
     />
-    <hr class="w-full border-t border-gray-200 mt-4 mb-3" />
+    <hr class="w-full border-t border-gray-200 mt-4 mb-3 hidden md:block" />
 
-    <div class="flex justify-between">
-      <p>
+    <div class="flex justify-between items-center">
+      <p class="hidden md:block">
         Показано {{ paginatedCurrencies.length }} результатов из
         {{ allCoins.length }}
       </p>
 
-      <div v-if="allCoins.length > itemsOnPage">
+      <div
+        v-if="allCoins.length > itemsOnPage"
+        class="fixed bottom-0 left-0 w-full px-4 py-3 flex justify-between bg-white sm:static sm:w-auto sm:p-0 sm:bg-transparent"
+      >
         <button
           type="button"
           class="px-4 py-2 mr-3 bg-white rounded-md border-2 border-solid"
@@ -79,7 +84,12 @@ export default {
       });
     }
   },
-  mounted() {},
+  mounted() {
+    window.addEventListener("resize", this.calculateMaxGraphElements);
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.calculateMaxGraphElements);
+  },
   watch: {
     search() {
       this.page = 1;
@@ -127,6 +137,7 @@ export default {
         this.$refs.graphBlock.$refs.graph.clientWidth / 34;
     },
     updatePrice(name, price) {
+      this.allCoins = this.allCoins.filter((c) => c.price !== "-");
       this.allCoins
         .filter((c) => c.name === name)
         .forEach((c) => {
@@ -148,8 +159,6 @@ export default {
       }
     },
     addTiker(coin) {
-      this.allCoins = this.allCoins.filter((c) => c.price !== "-");
-
       const newCoin = {
         name: coin,
         price: "-",

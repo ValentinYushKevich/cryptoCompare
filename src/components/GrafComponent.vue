@@ -5,7 +5,7 @@
         v-for="(bar, i) in calculateBarsHeight"
         :key="i"
         :style="{ height: `${bar}%` }"
-        class="bg-yellow-300 w-9 mr-0.5"
+        class="bg-yellow-300 w-4 md:w-8 mr-0.5"
       />
     </div>
   </section>
