@@ -3,8 +3,8 @@
     <div class="border-2 border-gray-300 rounded-lg px-3 py-2 bg-white">
       <div class="relative rounded-md">
         <input
-          v-model="search"
-          @keydown.enter="add"
+          :value="modelValue"
+          @input="$emit('update:modelValue', $event.target.value)"
           type="text"
           name="wallet"
           id="wallet"
@@ -34,15 +34,11 @@
 
 <script>
 export default {
-  data() {
-    return {
-      search: "",
-    };
-  },
-  searchCoin() {
-    this.$emit("searchCoin", this.search);
-
-    this.search = "";
+  props: {
+    modelValue: {
+      type: String,
+      required: true,
+    },
   },
 };
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto flex flex-col bg-gray-100 p-6 h-screen">
     <TikerComponent @addTiker="addTiker" />
-    <SearchInput @searchCoin="searchCoin" />
+    <SearchInput v-model="search" />
     <div class="mt-5 mb-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
       <CoinCard
         v-for="coin of filteredCurrencies"
@@ -67,7 +67,6 @@ export default {
   },
   methods: {
     updatePrice(name, price) {
-      console.log("PRICE", price);
       this.allCurrencies
         .filter((c) => c.name === name)
         .forEach((c) => {
@@ -81,10 +80,13 @@ export default {
       console.log(value);
     },
     addTiker(currency) {
+      this.allCurrencies = this.allCurrencies.filter((c) => c.price !== "-");
+
       const newCoin = {
         name: currency,
         price: "-",
       };
+
       this.allCurrencies.push(newCoin);
       subscribeToCurrency(currency, (newPrice) => {
         return this.updatePrice(currency, newPrice);
@@ -96,7 +98,7 @@ export default {
         return;
       }
 
-      this.selectedCurrency = coin.name;
+      this.selectedCurrency = coin;
     },
     deleteTiker(currency) {
       this.allCurrencies = this.allCurrencies.filter(
