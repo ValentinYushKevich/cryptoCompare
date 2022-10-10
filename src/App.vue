@@ -4,7 +4,7 @@
     <SearchInput v-model="search" />
     <div class="mt-5 mb-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
       <CoinCard
-        v-for="coin of filteredCurrencies"
+        v-for="coin of paginatedCurrencies"
         :key="coin.name"
         :coin="coin"
         :isActive="selectedCurrency === coin.name"
@@ -16,9 +16,12 @@
     <hr class="w-full border-t border-gray-200 mt-4 mb-3" />
 
     <div class="flex justify-between">
-      <p>Показано 2 результатов из 8</p>
+      <p>
+        Показано {{ paginatedCurrencies.length }} результатов из
+        {{ allCurrencies.length }}
+      </p>
 
-      <div>
+      <div v-if="allCurrencies.length > itemsOnPage">
         <button
           type="button"
           class="px-4 py-2 mr-3 bg-white rounded-md border-2 border-solid"
@@ -54,6 +57,8 @@ export default {
       allCurrencies: [],
       search: "",
       selectedCurrency: null,
+      currentPage: 1,
+      itemsOnPage: 6,
     };
   },
   created() {
@@ -69,15 +74,39 @@ export default {
   },
   mounted() {},
   watch: {
+    search() {
+      this.page = 1;
+    },
     allCurrencies() {
       localStorage.setItem("coins-list", JSON.stringify(this.allCurrencies));
     },
   },
   computed: {
+    startPageIndex() {
+      return this.itemsOnPage * (this.currentPage - 1);
+    },
+    endPageIndex() {
+      return this.currentPage * this.itemsOnPage;
+    },
+    hasNextPage() {
+      return this.filteredCurrencies.length > this.endPageIndex;
+    },
+    coinsPerPage() {
+      return this.filteredCurrencies.slice(
+        this.startPageIndex,
+        this.endPageIndex
+      );
+    },
     filteredCurrencies() {
       return this.allCurrencies.filter(
         (currency) =>
           currency.name.includes(this.search) && currency.price !== "-"
+      );
+    },
+    paginatedCurrencies() {
+      return this.filteredCurrencies.slice(
+        this.startPageIndex,
+        this.endPageIndex
       );
     },
   },
@@ -90,8 +119,12 @@ export default {
           c.price = price;
         });
     },
-    paginationChange(value) {
-      console.log(value);
+    paginationChange(direction) {
+      if (direction === "prev" && this.currentPage > 1) {
+        this.currentPage--;
+      } else if (this.hasNextPage) {
+        this.currentPage++;
+      }
     },
     searchCoin(value) {
       console.log(value);
