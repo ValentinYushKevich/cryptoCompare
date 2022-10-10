@@ -11,8 +11,8 @@
         >
         <div class="mt-1 relative rounded-md">
           <input
-            v-model="ticker"
-            @keydown.enter="addTiker"
+            v-model="coin"
+            @keydown.enter="addCoin"
             type="text"
             name="wallet"
             id="wallet"
@@ -23,7 +23,7 @@
       </div>
     </div>
     <button
-      @click="addTiker"
+      @click="addCoin"
       type="button"
       class="px-6 py-3 rounded-md text-white bg-purple-900 font-medium w-32 mt-3"
     >
@@ -34,16 +34,17 @@
 
 <script>
 export default {
+  name: "CoinInput",
   data() {
     return {
-      ticker: "",
+      coin: "",
     };
   },
   methods: {
-    addTiker() {
-      this.$emit("addTiker", this.ticker);
+    addCoin() {
+      this.$emit("addCoin", this.coin);
 
-      this.ticker = "";
+      this.coin = "";
     },
   },
 };

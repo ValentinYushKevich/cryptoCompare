@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto flex flex-col bg-gray-100 p-6">
-    <TikerComponent @addTiker="addTiker" />
+    <CoinInput @addCoin="addNewCoin" />
     <SearchInput v-model="search" />
     <div
       class="mt-5 mb-2 grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1"
@@ -25,7 +25,7 @@
     <div class="flex justify-between items-center">
       <p class="hidden md:block">
         Показано {{ paginatedCurrencies.length }} результатов из
-        {{ allCoins.length }}
+        {{ this.allCoins.filter((c) => c.price !== "-").length }}
       </p>
 
       <div
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import TikerComponent from "@/components/TikerComponent.vue";
+import CoinInput from "@/components/CoinInput.vue";
 import SearchInput from "@/components/SearchInput.vue";
 import GrafComponent from "@/components/GrafComponent.vue";
 import CoinCard from "@/components/CoinCard.vue";
@@ -61,7 +61,7 @@ import { subscribeToCurrency, unsubscribeFromCurrency } from "@/utils/wsConnect"
 
 export default {
   name: "App",
-  components: { TikerComponent, SearchInput, GrafComponent, CoinCard },
+  components: { CoinInput, SearchInput, GrafComponent, CoinCard },
   data() {
     return {
       allCoins: [],
@@ -92,7 +92,7 @@ export default {
   },
   watch: {
     search() {
-      this.page = 1;
+      this.currentPage = 1;
     },
     allCoins() {
       localStorage.setItem("coins-list", JSON.stringify(this.allCoins));
@@ -137,7 +137,6 @@ export default {
         this.$refs.graphBlock.$refs.graph.clientWidth / 34;
     },
     updatePrice(name, price) {
-      this.allCoins = this.allCoins.filter((c) => c.price !== "-");
       this.allCoins
         .filter((c) => c.name === name)
         .forEach((c) => {
@@ -158,7 +157,8 @@ export default {
         this.currentPage++;
       }
     },
-    addTiker(coin) {
+    addNewCoin(coin) {
+      this.allCoins = this.allCoins.filter((c) => c.price !== "-");
       const newCoin = {
         name: coin,
         price: "-",

@@ -32,6 +32,7 @@
 
 <script>
 export default {
+  name: "CoinCard",
   props: {
     coin: {
       type: Object,

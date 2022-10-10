@@ -36,6 +36,7 @@
 
 <script>
 export default {
+  name: "SearchInput",
   props: {
     modelValue: {
       type: String,

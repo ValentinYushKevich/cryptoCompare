@@ -13,6 +13,7 @@
 
 <script>
 export default {
+  name: "GrafComponent",
   props: {
     graph: {
       type: Array,
