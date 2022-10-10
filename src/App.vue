@@ -97,9 +97,6 @@ export default {
     allCoins() {
       localStorage.setItem("coins-list", JSON.stringify(this.allCoins));
     },
-    selectedCoin() {
-      this.priceGraph = [];
-    },
   },
   computed: {
     startPageIndex() {
@@ -132,7 +129,7 @@ export default {
   methods: {
     calculateMaxGraphElements() {
       if (!this.$refs.graphBlock) return;
-
+      // TODO делить на 17, а не на 34 при разрешении экрана 360
       this.maxPriceGraphElements =
         this.$refs.graphBlock.$refs.graph.clientWidth / 34;
     },
@@ -169,16 +166,16 @@ export default {
         return this.updatePrice(coin, newPrice);
       });
     },
-    selectCurrency(coin) {
+    async selectCurrency(coin) {
+      this.priceGraph = [];
+
       if (this.selectedCoin == coin) {
         this.selectedCoin = null;
         return;
       }
-
       this.selectedCoin = coin;
-      this.$nextTick(() => {
-        this.calculateMaxGraphElements();
-      });
+      await this.$nextTick();
+      this.calculateMaxGraphElements();
     },
     deleteTiker(coin) {
       this.allCoins = this.allCoins.filter(
