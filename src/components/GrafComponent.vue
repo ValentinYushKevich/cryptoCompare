@@ -1,13 +1,36 @@
 <template>
-  <section class="relative">
+  <section ref="graph" class="relative">
     <div class="flex items-end bg-white h-72 p-5 rounded-lg">
-      <div :style="{ height: `${10}%` }" class="bg-yellow-300 w-9 mr-0.5" />
-      <div :style="{ height: `${20}%` }" class="bg-yellow-300 w-9 mr-0.5" />
-      <div :style="{ height: `${33}%` }" class="bg-yellow-300 w-9 mr-0.5" />
+      <div
+        v-for="(bar, i) in calculateBarsHeight"
+        :key="i"
+        :style="{ height: `${bar}%` }"
+        class="bg-yellow-300 w-9 mr-0.5"
+      />
     </div>
   </section>
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    graph: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+  },
+  computed: {
+    calculateBarsHeight() {
+      const maxPrice = Math.max(...this.graph);
+      const minPrice = Math.min(...this.graph);
+
+      if (maxPrice === minPrice) return this.graph.map(() => 50);
+
+      return this.graph.map(
+        (price) => 5 + ((price - minPrice) * 95) / (maxPrice - minPrice)
+      );
+    },
+  },
+};
 </script>

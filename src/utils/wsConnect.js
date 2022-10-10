@@ -7,30 +7,17 @@ const socket = new WebSocket(
 
 const coinPricesHandlers = new Map();
 
-console.log("process.env.VUE_APP_WS_KEY", apiKey);
-
 socket.addEventListener("message", (e) => {
-  const {
-    TYPE: type,
-    FROMSYMBOL: currency,
-    PRICE: newPrice,
-  } = JSON.parse(e.data);
-
-  console.log("soketevent", e);
-
-  console.log("type currency newPrice", type, currency, newPrice);
+  const { FROMSYMBOL: currency, PRICE: newPrice } = JSON.parse(e.data);
 
   if (newPrice === undefined) return;
 
   const priceHandler = coinPricesHandlers.get(currency);
-  console.log("priceHandler", priceHandler);
   priceHandler(newPrice);
 });
 
 function sendOnSocket(value) {
   const stringifiMessage = JSON.stringify(value);
-  console.log("socket.readyState", socket.readyState);
-  console.log("WebSocket.OPEN", WebSocket.OPEN);
 
   if (socket.readyState === WebSocket.OPEN) {
     socket.send(stringifiMessage);
@@ -41,7 +28,6 @@ function sendOnSocket(value) {
     "open",
     () => {
       socket.send(stringifiMessage);
-      console.log("Отправлено");
     },
     { once: true }
   );
@@ -49,7 +35,7 @@ function sendOnSocket(value) {
 
 export const subscribeToCurrency = (currencyTitle, priceHandler) => {
   coinPricesHandlers.set(currencyTitle, priceHandler);
-  console.log("coinPricesHandlers", coinPricesHandlers);
+
   const message = {
     action: "SubAdd",
     subs: [`5~CCCAGG~${currencyTitle}~USD`],

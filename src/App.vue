@@ -7,21 +7,26 @@
         v-for="coin of paginatedCurrencies"
         :key="coin.name"
         :coin="coin"
-        :isActive="selectedCurrency === coin.name"
+        :isActive="selectedCoin === coin.name"
         @select="selectCurrency(coin.name)"
         @remove="deleteTiker(coin.name)"
       />
     </div>
-    <GrafComponent />
+    <GrafComponent
+      v-if="selectedCoin"
+      ref="graphBlock"
+      :graph="priceGraph"
+      class="mt-4"
+    />
     <hr class="w-full border-t border-gray-200 mt-4 mb-3" />
 
     <div class="flex justify-between">
       <p>
         Показано {{ paginatedCurrencies.length }} результатов из
-        {{ allCurrencies.length }}
+        {{ allCoins.length }}
       </p>
 
-      <div v-if="allCurrencies.length > itemsOnPage">
+      <div v-if="allCoins.length > itemsOnPage">
         <button
           type="button"
           class="px-4 py-2 mr-3 bg-white rounded-md border-2 border-solid"
@@ -54,20 +59,22 @@ export default {
   components: { TikerComponent, SearchInput, GrafComponent, CoinCard },
   data() {
     return {
-      allCurrencies: [],
+      allCoins: [],
       search: "",
-      selectedCurrency: null,
+      selectedCoin: null,
       currentPage: 1,
       itemsOnPage: 6,
+      priceGraph: [],
+      maxPriceGraphElements: 1,
     };
   },
   created() {
     const coinsData = localStorage.getItem("coins-list");
     if (coinsData) {
-      this.allCurrencies = JSON.parse(coinsData);
-      this.allCurrencies.forEach((currency) => {
-        subscribeToCurrency(currency.name, (newPrice) => {
-          return this.updatePrice(currency.name, newPrice);
+      this.allCoins = JSON.parse(coinsData);
+      this.allCoins.forEach((coin) => {
+        subscribeToCurrency(coin.name, (newPrice) => {
+          return this.updatePrice(coin.name, newPrice);
         });
       });
     }
@@ -77,8 +84,11 @@ export default {
     search() {
       this.page = 1;
     },
-    allCurrencies() {
-      localStorage.setItem("coins-list", JSON.stringify(this.allCurrencies));
+    allCoins() {
+      localStorage.setItem("coins-list", JSON.stringify(this.allCoins));
+    },
+    selectedCoin() {
+      this.priceGraph = [];
     },
   },
   computed: {
@@ -98,9 +108,8 @@ export default {
       );
     },
     filteredCurrencies() {
-      return this.allCurrencies.filter(
-        (currency) =>
-          currency.name.includes(this.search) && currency.price !== "-"
+      return this.allCoins.filter(
+        (coin) => coin.name.includes(this.search) && coin.price !== "-"
       );
     },
     paginatedCurrencies() {
@@ -111,11 +120,23 @@ export default {
     },
   },
   methods: {
+    calculateMaxGraphElements() {
+      if (!this.$refs.graphBlock) return;
+
+      this.maxPriceGraphElements =
+        this.$refs.graphBlock.$refs.graph.clientWidth / 34;
+    },
     updatePrice(name, price) {
-      console.log("name, price", name, price);
-      this.allCurrencies
+      this.allCoins
         .filter((c) => c.name === name)
         .forEach((c) => {
+          if (c.name === this.selectedCoin) {
+            this.priceGraph.push(price);
+
+            while (this.priceGraph.length > this.maxPriceGraphElements) {
+              this.priceGraph.shift();
+            }
+          }
           c.price = price;
         });
     },
@@ -126,38 +147,38 @@ export default {
         this.currentPage++;
       }
     },
-    searchCoin(value) {
-      console.log(value);
-    },
-    addTiker(currency) {
-      this.allCurrencies = this.allCurrencies.filter((c) => c.price !== "-");
+    addTiker(coin) {
+      this.allCoins = this.allCoins.filter((c) => c.price !== "-");
 
       const newCoin = {
-        name: currency,
+        name: coin,
         price: "-",
       };
 
-      this.allCurrencies.push(newCoin);
-      subscribeToCurrency(currency, (newPrice) => {
-        return this.updatePrice(currency, newPrice);
+      this.allCoins.push(newCoin);
+      subscribeToCurrency(coin, (newPrice) => {
+        return this.updatePrice(coin, newPrice);
       });
     },
     selectCurrency(coin) {
-      if (this.selectedCurrency == coin) {
-        this.selectedCurrency = null;
+      if (this.selectedCoin == coin) {
+        this.selectedCoin = null;
         return;
       }
 
-      this.selectedCurrency = coin;
+      this.selectedCoin = coin;
+      this.$nextTick(() => {
+        this.calculateMaxGraphElements();
+      });
     },
-    deleteTiker(currency) {
-      this.allCurrencies = this.allCurrencies.filter(
-        (c) => c.name !== currency
+    deleteTiker(coin) {
+      this.allCoins = this.allCoins.filter(
+        (c) => c.name !== coin || c.price === "-"
       );
 
-      if (this.selectedCurrency === currency) this.selectedCurrency = null;
+      if (this.selectedCoin === coin) this.selectedCoin = null;
 
-      unsubscribeFromCurrency(currency);
+      unsubscribeFromCurrency(coin);
     },
   },
 };
